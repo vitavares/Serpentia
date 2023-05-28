@@ -13,9 +13,10 @@ xcoin = randint(40, 600)
 ycoin = randint(50, 430)
 list_serpentia = []
 serpentia_comp = 5
-velocidade = 5
+velocidade = 7
 x_controle = velocidade
 y_controle = 0
+morreu = False
 
 fonte = pygame.font.SysFont('uroob', 30, False, False)
 msc_fundo = pygame.mixer.music.load('media/fundo.mp3')
@@ -29,10 +30,22 @@ relogio = pygame.time.Clock()
 
 def up_serpentia(list_serpentia):
     for XeY in list_serpentia:
-        pygame.draw.rect(SURFACE, (127,255,212), (XeY[0], XeY[1], 30,30))
+        pygame.draw.rect(SURFACE, (127,255,212), (XeY[0], XeY[1], 20,20))
+
+def restart_game():
+    global points, xserpentia, yserpentia, xcoin, ycoin, serpentia_comp, morreu, list_serpentia, head
+    points = 0
+    xserpentia = int((largura_tela/2)-25)
+    yserpentia = int((altura_tela/2)-25)
+    xcoin = randint(40, 600)
+    ycoin = randint(50, 430)
+    serpentia_comp = 5
+    morreu = False
+    list_serpentia = []
+    head = []
 
 while True:
-    relogio.tick(60) #frames por segundo
+    relogio.tick(30) #frames por segundo
     SURFACE.fill((105,89,205))
     mensagem = fonte.render(('coins: {}'.format(points)), False, (0,0,0))
 
@@ -70,7 +83,7 @@ while True:
     xserpentia = xserpentia + x_controle
     yserpentia = yserpentia + y_controle
 
-    serpentia = pygame.draw.rect(SURFACE, ((127,255,212)), (xserpentia, yserpentia, 30, 30))
+    serpentia = pygame.draw.rect(SURFACE, ((127,255,212)), (xserpentia, yserpentia, 25, 25))
     coin = pygame.draw.rect(SURFACE, ((218,165,32)), (xcoin, ycoin, 30, 30))
 
     if serpentia.colliderect(coin):
@@ -80,12 +93,23 @@ while True:
         msc_ponto.play()
         serpentia_comp = serpentia_comp + 1
 
-    
     head = []
     head.append(xserpentia)
     head.append(yserpentia)
     list_serpentia.append(head) #como prender a cobra??
 
+    if list_serpentia.count(head) >1:
+        morreu = True
+        SURFACE.fill((255,255,255))
+        while morreu:
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == KEYDOWN:
+                    if event.type == K_r:
+                        restart_game()
+            pygame.display.update()
 
     if len(list_serpentia) > serpentia_comp:
         del list_serpentia[0]
