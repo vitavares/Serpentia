@@ -23,6 +23,7 @@ msc_fundo = pygame.mixer.music.load('media/fundo.mp3')
 pygame.mixer.music.set_volume(0.1)
 pygame.mixer.music.play(-1)
 msc_ponto = pygame.mixer.Sound('media/coin.wav')
+msc_morte = pygame.mixer.Sound('media/morte.mp3')
 
 SURFACE = pygame.display.set_mode((largura_tela,altura_tela)) #tamanho da janela
 pygame.display.set_caption("serpentia") #identificação
@@ -47,7 +48,7 @@ def restart_game():
 while True:
     relogio.tick(30) #frames por segundo
     SURFACE.fill((105,89,205))
-    mensagem = fonte.render(('coins: {}'.format(points)), False, (0,0,0))
+    pontuacao = fonte.render(('coins: {}'.format(points)), False, (0,0,0))
 
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -99,6 +100,12 @@ while True:
     list_serpentia.append(head) #como prender a cobra??
 
     if list_serpentia.count(head) >1:
+        pygame.mixer.music.stop()
+        msc_morte.play()
+        fonte2 = pygame.font.SysFont('uroob', 30, False, False)
+        mensagem = 'Você perdeu !!  Pressione R para jogar novamente =) {}'.format(points)
+        msg_morte = fonte2.render(mensagem, False, (0,0,0))
+        ret_mensagem = msg_morte.get_rect()
         morreu = True
         SURFACE.fill((255,255,255))
         while morreu:
@@ -107,14 +114,17 @@ while True:
                     pygame.quit()
                     sys.exit()
                 if event.type == KEYDOWN:
-                    if event.type == K_r:
+                    if event.key == K_r:
                         restart_game()
-            pygame.display.update()
+
+            ret_mensagem.center = (largura_tela//2, altura_tela//2)
+            SURFACE.blit(msg_morte, ret_mensagem)
+            pygame.display.flip()
 
     if len(list_serpentia) > serpentia_comp:
         del list_serpentia[0]
 
     up_serpentia(list_serpentia)
-    SURFACE.blit(mensagem, (520,10))
+    SURFACE.blit(pontuacao, (520,10))
 
-    pygame.display.update()
+    pygame.display.flip()
