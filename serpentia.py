@@ -4,24 +4,26 @@ from random import randint
 pygame.init()
 
 points = 0
-largura = 640
-altura = 480
+largura_tela = 640
+altura_tela = 480
 comprimento = 50
-x = (largura/2)-25
-y = (altura/2)-25
+x = int((largura_tela/2)-25)
+y = int((altura_tela/2)-25)
 x_2 = randint(40, 600)
 y_2 = randint(50, 430)
 fonte = pygame.font.SysFont('uroob', 30, False, False)
-
-
-SURFACE = pygame.display.set_mode((largura,altura)) #tamanho da janela
+msc_fundo = pygame.mixer.music.load('media/fundo.mp3')
+pygame.mixer.music.set_volume(0.1)
+pygame.mixer.music.play(-1)
+msc_ponto = pygame.mixer.Sound('media/coin.wav')
+SURFACE = pygame.display.set_mode((largura_tela,altura_tela)) #tamanho da janela
 pygame.display.set_caption("serpentia") #identificação
 relogio = pygame.time.Clock()
 
 while True:
     relogio.tick(60) #frames por segundo
     SURFACE.fill((105,89,205))
-    mensagem = fonte.render(('Pontos: {}'.format(points)), True, (0,0,0))
+    mensagem = fonte.render(('Pontos: {}'.format(points)), False, (0,0,0))
     for event in pygame.event.get():
         if event.type == QUIT:
             print(points)
@@ -37,12 +39,13 @@ while True:
     if pygame.key.get_pressed()[K_s or K_DOWN]:
         y = y+5
 
-    ret_1 = pygame.draw.rect(SURFACE, (0,0,0), (x, y, comprimento, 50))
-    ret_2 = pygame.draw.rect(SURFACE, (0,0,200), (x_2, y_2, 50, 50))
-    if ret_1.colliderect(ret_2):
+    serpentia = pygame.draw.rect(SURFACE, ((127,255,212)), (x, y, comprimento, 50))
+    coin = pygame.draw.rect(SURFACE, ((218,165,32)), (x_2, y_2, 50, 50))
+    if serpentia.colliderect(coin):
         x_2 = randint(40, 600)
         y_2 = randint(50, 430)
         points = points+1
         comprimento = comprimento + 50
+        msc_ponto.play()
     SURFACE.blit(mensagem, (520,10))
     pygame.display.update()
