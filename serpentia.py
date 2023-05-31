@@ -1,5 +1,5 @@
 import pygame, sys
-from pygame.locals import * # submodulo com constantes e funções
+from pygame.locals import *
 from random import randint
 
 pygame.init()
@@ -16,18 +16,17 @@ serpentia_comp = 5
 velocidade = 7
 x_controle = velocidade
 y_controle = 0
-morreu = False
-
+relogio = pygame.time.Clock()
 fonte = pygame.font.SysFont('uroob', 30, False, False)
-msc_fundo = pygame.mixer.music.load('media/fundo.mp3')
-pygame.mixer.music.set_volume(0.1)
-pygame.mixer.music.play(-1)
-msc_ponto = pygame.mixer.Sound('media/coin.wav')
-msc_morte = pygame.mixer.Sound('media/morte.mp3')
 
 SURFACE = pygame.display.set_mode((largura_tela,altura_tela)) #tamanho da janela
 pygame.display.set_caption("serpentia") #identificação
-relogio = pygame.time.Clock()
+
+msc_ponto = pygame.mixer.Sound('media/coin.wav')
+msc_morte = pygame.mixer.Sound('media/morte.mp3')
+msc_fundo = pygame.mixer.music.load('media/fundo.mp3')
+pygame.mixer.music.set_volume(0.1)
+pygame.mixer.music.play(-1)
 
 def up_serpentia(list_serpentia):
     for XeY in list_serpentia:
@@ -45,10 +44,10 @@ def restart_game():
     list_serpentia = []
     head = []
 
+morreu = False
 while True:
-    relogio.tick(30) #frames por segundo
+    relogio.tick(30)
     SURFACE.fill((105,89,205))
-    pontuacao = fonte.render(('coins: {}'.format(points)), False, (0,0,0))
 
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -56,31 +55,18 @@ while True:
             pygame.quit()
             sys.exit()
         if  event.type == KEYDOWN:
-            if event.key == K_a:
-                if x_controle == velocidade:
-                    pass
-                else:
+            if event.key == K_a and x_controle != velocidade:
                     x_controle = -velocidade
                     y_controle = 0
-            if event.key == K_d:
-                if x_controle == -velocidade:
-                    pass
-                else:
+            if event.key == K_d and x_controle != -velocidade:
                     x_controle = velocidade
                     y_controle = 0
-            if event.key == K_w:
-                if y_controle == velocidade:
-                    pass
-                else:
+            if event.key == K_w and y_controle != velocidade:
                     y_controle = -velocidade
                     x_controle = 0
-            if event.key == K_s:
-                if y_controle == -velocidade:
-                    pass
-                else:
+            if event.key == K_s and y_controle != -velocidade:
                     y_controle = velocidade
                     x_controle = 0
-
     xserpentia = xserpentia + x_controle
     yserpentia = yserpentia + y_controle
 
@@ -88,11 +74,13 @@ while True:
     coin = pygame.draw.rect(SURFACE, ((218,165,32)), (xcoin, ycoin, 30, 30))
 
     if serpentia.colliderect(coin):
-        xcoin = randint(40, 600)
-        ycoin = randint(50, 430)
+        if xcoin in list_serpentia or ycoin in list_serpentia:
+            xcoin = randint(40, 600)
+            ycoin = randint(50, 430)
         points = points+1
         msc_ponto.play()
         serpentia_comp = serpentia_comp + 1
+    pontuacao = fonte.render(('coins: {}'.format(points)), False, (0,0,0))
 
     head = []
     head.append(xserpentia)
