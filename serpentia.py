@@ -74,9 +74,8 @@ while True:
     coin = pygame.draw.rect(SURFACE, ((218,165,32)), (xcoin, ycoin, 30, 30))
 
     if serpentia.colliderect(coin):
-        if xcoin in list_serpentia or ycoin in list_serpentia:
-            xcoin = randint(40, 600)
-            ycoin = randint(50, 430)
+        xcoin = randint(40, 600)
+        ycoin = randint(50, 430)
         points = points+1
         msc_ponto.play()
         serpentia_comp = serpentia_comp + 1
@@ -85,7 +84,7 @@ while True:
     head = []
     head.append(xserpentia)
     head.append(yserpentia)
-    list_serpentia.append(head) #como prender a cobra??
+    list_serpentia.append(head) 
 
     if list_serpentia.count(head) >1:
         pygame.mixer.music.stop()

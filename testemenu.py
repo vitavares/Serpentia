@@ -18,5 +18,4 @@ while run:
             pygame.quit()
             sys.exit()
 
-
     pygame.display.flip()
